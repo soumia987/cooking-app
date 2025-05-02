@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; // Ajoutez useState ici
 import axios from 'axios';
+import { Link, useLocation } from 'react-router-dom'; // Ajoutez useLocation si vous l'utilisez
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchTerm = queryParams.get('search') || '';
+  const category = queryParams.get('category') || '';
 
   useEffect(() => {
     let isMounted = true;
@@ -12,7 +17,16 @@ const RecipeList = () => {
 
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('https://www.themealdb.com/api/json/v1/1/search.php?s=', {
+        let url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+        
+        if (searchTerm) {
+          url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`;
+        } 
+        else if (category) {
+          url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`;
+        }
+
+        const response = await axios.get(url, {
           cancelToken: source.token
         });
         
@@ -45,7 +59,7 @@ const RecipeList = () => {
       isMounted = false;
       source.cancel('Component unmounted, canceling request');
     };
-  }, []);
+  }, [searchTerm, category]);
 
   if (loading) return <p className="p-4">Chargement...</p>;
   if (error) return <p className="p-4 text-red-500">{error}</p>;
@@ -55,9 +69,10 @@ const RecipeList = () => {
       <h1 className="text-2xl font-bold mb-4">Liste des recettes</h1>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {recipes.map((recipe) => (
-          <div
+          <Link 
+            to={`/recipe/${recipe.idMeal}`}
             key={recipe.idMeal}
-            className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
+            className="block bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
           >
             <img 
               src={recipe.strMealThumb} 
@@ -71,7 +86,7 @@ const RecipeList = () => {
             <div className="mt-3">
               <span className="text-sm text-blue-600">Catégorie: {recipe.strCategory}</span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

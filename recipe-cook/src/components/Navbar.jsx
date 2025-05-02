@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import logo from '../images/Logo.png';
 
 const Navbar = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,14 +33,6 @@ const Navbar = () => {
         >
           Accueil
         </Link>
-        {user && isAdmin && (
-          <Link 
-            to="/dashboard" 
-            className="hover:text-orange-300 transition-colors px-2 py-1 rounded hover:bg-gray-700"
-          >
-            Dashboard
-          </Link>
-        )}
         {!user ? (
           <Link 
             to="/login" 

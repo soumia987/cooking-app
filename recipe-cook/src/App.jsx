@@ -2,9 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import RecipeList from './pages/RecipeList';
+import RecipeDetails from './pages/RecipeDetails';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import { ProtectedRoute } from './routes/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -17,15 +16,8 @@ const App = () => {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<RecipeList />} />
+              <Route path="/recipe/:id" element={<RecipeDetails />} />
               <Route path="/login" element={<Login />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute roles={["admin"]}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
             </Routes>
           </main>
           <Footer />
